@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 logger = logging.getLogger('codeBlocks')
 
 @api_view(['GET'])
-def get_code_locks(request):
+def get_code_blocks(request):
     try:
         codeBlocks = CodeBlock.objects.all()
         logger.debug("All code blocks provided to the client.")
