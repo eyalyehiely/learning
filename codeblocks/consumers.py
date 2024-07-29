@@ -1,23 +1,10 @@
-# consumers.py
-
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class CodeBlockConsumer(AsyncWebsocketConsumer):
-    connected_users = set()
-
     async def connect(self):
         self.codeblock_id = self.scope['url_route']['kwargs']['codeblock_id']
         self.room_group_name = f'codeblock_{self.codeblock_id}'
-
-        # Add the user to the connected users set
-        self.connected_users.add(self.channel_name)
-
-        # Determine the role of the user
-        if len(self.connected_users) == 1:
-            self.role = 'mentor'
-        else:
-            self.role = 'student'
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -28,13 +15,10 @@ class CodeBlockConsumer(AsyncWebsocketConsumer):
 
         # Send the role to the client
         await self.send(text_data=json.dumps({
-            'role': self.role
+            'role': 'mentor' if len(self.channel_layer.groups[self.room_group_name]) == 1 else 'student'
         }))
 
     async def disconnect(self, close_code):
-        # Remove the user from the connected users set
-        self.connected_users.remove(self.channel_name)
-
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
