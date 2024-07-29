@@ -43,16 +43,19 @@ INSTALLED_APPS = [
     'channels',
 ]
 
-ASGI_APPLICATION = 'backend.asgi.application'  # Corrected path
+ASGI_APPLICATION = 'backend.asgi.application'  
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
 }
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware
+    'corsheaders.middleware.CorsMiddleware',  
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,8 +140,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Add your frontend URL here
-    # Add other allowed origins as needed
+    "http://localhost:5173",  # Add your frontend URL here
+
 ]
 
 # Ensure CORS is properly configured for cross-origin requests
