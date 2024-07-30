@@ -13,10 +13,6 @@ class CodeBlockConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        # Send the role to the client
-        await self.send(text_data=json.dumps({
-            'role': 'mentor' if len(self.channel_layer.groups[self.room_group_name]) == 1 else 'student'
-        }))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
