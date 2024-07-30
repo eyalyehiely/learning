@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'codeblocks',
     'corsheaders',
     'channels',
+    'drf_yasg',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'  
