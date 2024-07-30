@@ -1,7 +1,7 @@
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-def send_codeblock_update(codeblock_id, code,original_code_block):
+def send_codeblock_update(codeblock_id, code):
     channel_layer = get_channel_layer()
     group_name = f'codeblock_{codeblock_id}'
 
