@@ -12,11 +12,13 @@ daphne==4.1.2
 Django==5.0.7
 django-cors-headers==4.4.0
 djangorestframework==3.15.2
+drf-yasg==1.21.7
 gunicorn==22.0.0
 h11==0.14.0
 hyperlink==21.0.0
 idna==3.7
 incremental==24.7.1
+inflection==0.5.1
 msgpack==1.0.8
 packaging==24.1
 pyasn1==0.6.0
@@ -25,6 +27,8 @@ pycparser==2.22
 pyOpenSSL==24.2.1
 python-engineio==4.9.1
 python-socketio==5.11.3
+pytz==2024.1
+PyYAML==6.0.1
 redis==5.0.7
 service-identity==24.1.0
 simple-websocket==1.0.0
@@ -33,5 +37,6 @@ sqlparse==0.5.1
 Twisted==24.3.0
 txaio==23.1.1
 typing_extensions==4.12.2
+uritemplate==4.1.1
 wsproto==1.2.0
 zope.interface==6.4.post2

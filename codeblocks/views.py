@@ -5,9 +5,38 @@ from .serializers import CodeBlockSerializer
 from .models import CodeBlock
 from django.core.exceptions import ObjectDoesNotExist
 from .utils import send_codeblock_update
+from drf_yasg.utils import swagger_auto_schema
+from .models import CodeBlock
+from .serializers import CodeBlockSerializer
+from drf_yasg import openapi
 
 logger = logging.getLogger('codeBlocks')
 
+# Define the code parameter in the request body
+# Define the code parameter in the request body
+code_param = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'code': openapi.Schema(type=openapi.TYPE_STRING, description='Code to update the code block with')
+    }
+)
+
+# Define possible responses
+responses = {
+    200: openapi.Response(description="Code block updated", examples={
+        'application/json': {"success": "Code block updated"}
+    }),
+    404: openapi.Response(description="No CodeBlock found with the given ID", examples={
+        'application/json': {"error": "No CodeBlock found with ID {code_block_id}."}
+    }),
+    500: openapi.Response(description="An error occurred", examples={
+        'application/json': {"error": "An error occurred: {error_message}"}
+    }),
+}
+
+
+
+@swagger_auto_schema(method='get', responses={200: CodeBlockSerializer(many=True)})
 @api_view(['GET'])
 def get_code_blocks(request):
     try:
@@ -19,6 +48,9 @@ def get_code_blocks(request):
     except Exception as e:
         logger.error(f"Error retrieving code blocks: {e}")
         return Response({'Error': 'Page not found'}, status=404)
+
+
+
 
 @api_view(['GET'])
 def get_code_block(request, code_block_id):
@@ -38,6 +70,12 @@ def get_code_block(request, code_block_id):
         return Response({'Error': 'An error occurred'}, status=500)
 
 
+
+
+
+
+# edit code
+@swagger_auto_schema(method='put', request_body=code_param, responses=responses)
 @api_view(['PUT'])
 def edit_code_block(request, code_block_id):
     try:
@@ -46,8 +84,9 @@ def edit_code_block(request, code_block_id):
         codeBlock.code = code
         codeBlock.save()
         
-        # Send update to WebSocket group
-        send_codeblock_update(code_block_id, code)
+        # Send update to the mentor group if the request is from a student
+        if request.user.role == 'student':  # Assume you have a user role attribute
+            send_codeblock_update(code_block_id, code)
 
         logger.info(f"CodeBlock {codeBlock.title} updated.")
         return Response({"success": "Code block updated"}, status=200)
