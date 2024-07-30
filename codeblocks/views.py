@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from .serializers import CodeBlockSerializer
 from .models import CodeBlock
 from django.core.exceptions import ObjectDoesNotExist
+from .utils import send_codeblock_update
 
 logger = logging.getLogger('codeBlocks')
 
@@ -12,7 +13,7 @@ def get_code_blocks(request):
     try:
         codeBlocks = CodeBlock.objects.all()
         logger.debug("All code blocks provided to the client.")
-        all_code_blocks = [{'id': block.id, 'title': block.title, 'code': block.code} for block in codeBlocks]
+        all_code_blocks = [{'id': block.id, 'title': block.title, 'instructions': block.instructions, 'code': block.code} for block in codeBlocks]
         return Response({'codeBlocks': all_code_blocks}, status=200)
     
     except Exception as e:
@@ -35,3 +36,30 @@ def get_code_block(request, code_block_id):
     except Exception as e:
         logger.error(f"Error retrieving code block: {e}")
         return Response({'Error': 'An error occurred'}, status=500)
+
+@api_view(['POST'])
+def check_user_code(request, script_id):
+    try:
+        user_script = request.data.get('code')
+        script_solution = CodeBlock.objects.get(id=script_id).solution
+        if not script_solution:
+            logger.error("No solution found for the given script ID.")
+            return Response({"error": "No solution found for the given script ID."}, status=404)
+        
+        if user_script == script_solution:
+            logger.info("User script matches the solution.")
+            send_codeblock_update(script_id, user_script)
+            return Response({"success": "Script matches the solution."}, status=200)
+        
+        else:
+            logger.info("User script does not match the solution.")
+            send_codeblock_update(script_id, user_script)
+            return Response({"fail": "Script does not match the solution."}, status=200)
+        
+    except CodeBlock.DoesNotExist:
+        logger.error(f"No CodeBlock found with ID {script_id}.")
+        return Response({"error": f"No CodeBlock found with ID {script_id}."}, status=404)
+    
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        return Response({"error": f"An error occurred: {e}"}, status=500)
