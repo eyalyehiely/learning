@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     'drf_yasg',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+}
+
 ASGI_APPLICATION = 'backend.asgi.application'
 
 CHANNEL_LAYERS = {
