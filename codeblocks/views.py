@@ -1,42 +1,20 @@
 import logging
-
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-
-from django.core.exceptions import ObjectDoesNotExist
 from .utils import send_codeblock_update
 from drf_yasg.utils import swagger_auto_schema
 from .models import *
 from .serializers import *
-from drf_yasg import openapi
+from backend.swagger import code_param,check_user_code_responses,codeblock_submission_responses,codeblock_submission_detail_responses
 
+# defined logger
 codeblock_logger = logging.getLogger('code_block')
 submission_logger = logging.getLogger('submission')
 
-# Define the code parameter in the request body
-# Define the code parameter in the request body
-code_param = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        'code': openapi.Schema(type=openapi.TYPE_STRING, description='Code to update the code block with')
-    }
-)
-
-# Define possible responses
-responses = {
-    200: openapi.Response(description="Code block updated", examples={
-        'application/json': {"success": "Code block updated"}
-    }),
-    404: openapi.Response(description="No CodeBlock found with the given ID", examples={
-        'application/json': {"error": "No CodeBlock found with ID {code_block_id}."}
-    }),
-    500: openapi.Response(description="An error occurred", examples={
-        'application/json': {"error": "An error occurred: {error_message}"}
-    }),
-}
 
 
+#  get all code blocks 
 @swagger_auto_schema(method='get', responses={200: CodeBlockSerializer(many=True)})
 @api_view(['GET'])
 def get_code_blocks(request):
@@ -53,7 +31,8 @@ def get_code_blocks(request):
         return Response({'Error': 'Page not found'}, status=404)
 
 
-
+#checking user code : bonus
+@swagger_auto_schema(method='post', request_body=code_param, responses=check_user_code_responses)
 @api_view(['POST'])
 def check_user_code(request, code_block_id):
     try:
@@ -86,8 +65,8 @@ def check_user_code(request, code_block_id):
 
 
 
-
-@swagger_auto_schema(method='post', request_body=SubmissionSerializer)
+# codeblock submission
+@swagger_auto_schema(method='post', request_body=SubmissionSerializer, responses=codeblock_submission_responses)
 @api_view(['POST'])
 def codeblock_submission(request, user_id):
     if request.method == 'POST':
@@ -112,6 +91,10 @@ def codeblock_submission(request, user_id):
 
 
 
+# codeblock_submission data
+@swagger_auto_schema(method='get', responses=codeblock_submission_detail_responses)
+@swagger_auto_schema(method='put', request_body=SubmissionSerializer, responses=codeblock_submission_detail_responses)
+@swagger_auto_schema(method='delete', responses=codeblock_submission_detail_responses)
 @api_view(['GET', 'PUT', 'DELETE'])
 def codeblock_submission_detail(request,code_block_id):
 
