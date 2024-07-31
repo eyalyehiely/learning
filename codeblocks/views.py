@@ -92,9 +92,7 @@ def codeblock_submission(request, user_id):
 
 
 # codeblock_submission data
-@swagger_auto_schema(method='get', responses=codeblock_submission_detail_responses)
-@swagger_auto_schema(method='put', request_body=SubmissionSerializer, responses=codeblock_submission_detail_responses)
-@swagger_auto_schema(method='delete', responses=codeblock_submission_detail_responses)
+@swagger_auto_schema(methods=['get', 'put', 'delete'], request_body=SubmissionSerializer)
 @api_view(['GET', 'PUT', 'DELETE'])
 def codeblock_submission_detail(request,code_block_id):
 
