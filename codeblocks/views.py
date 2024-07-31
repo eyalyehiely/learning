@@ -1,4 +1,4 @@
-import logging
+import logging,json
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -86,69 +86,162 @@ def check_user_code(request, code_block_id):
         return Response({"error": f"An error occurred: {e}"}, status=500)
 
 
+@api_view(['POST'])
+def fetch_client_uuid_to_server(request):
+    data = json.loads(request.body)
+    user_id = data.get('clientUUID')
+
+    if not user_id:
+        submission_logger.debug("ClientUUID is missing")
+        return Response({'error': 'ClientUUID is missing'}, status=400)
+    else:
+        submission_logger.debug(f"ClientUUID accepted,{user_id}")
+        return Response({'success': f"ClientUUID accepted,{user_id}"}, status=200)
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
 
-# codeblock submission
+def create_new_submission(code_block_id, user_id):
+    codeblock = get_object_or_404(CodeBlock, id=code_block_id)
+    new_submission_data = {
+        'code_block': codeblock.id,
+        'user_id': user_id,
+        'user_code': codeblock.code,  # Initialize with the default value from CodeBlock
+    }
+    serializer = SubmissionSerializer(data=new_submission_data)
+    if serializer.is_valid():
+        new_submission = serializer.save()
+        submission_logger("submission created")
+        return new_submission, None
+    return None, serializer.errors
+
+
+
+
+
+
 @swagger_auto_schema(method='post', request_body=SubmissionSerializer)
 @api_view(['POST'])
-def codeblock_submission(request, user_id):
-    if request.method == 'POST':
-        codeblock_id = request.data.get('code_block_id')
+def codeblock_submission(request):
+    data = request.data
+    user_id = data.get('clientUUID')
+    code_block_id = int(data.get('code_block_id'))
+    
 
-        codeblock = get_object_or_404(CodeBlock, id=codeblock_id)
+    if not code_block_id:
+        return Response({'error': 'CodeBlock ID is missing'}, status=400)
+    
+    if not user_id:
+        return Response({'error': 'User ID is missing'}, status=400)
 
-        check_submission = Submission.objects.filter(code_block=codeblock, user_id=user_id)
-        if check_submission.exists():
-            return Response({'error': 'Submission already exists'}, status=400)
-        
-        # create submission if not exist
-        else:
-            serializer = SubmissionSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=201)
-
-            return Response(serializer.errors, status=400)
-
+    codeblock = get_object_or_404(CodeBlock, id=code_block_id)
+    check_submission = Submission.objects.filter(code_block=codeblock, user_id=user_id)
+    if check_submission.exists():
+        return Response({'error': 'Submission already exists'}, status=400)
+    else:
+        data['user_id'] = user_id  # Ensure user_id is included in the data
+        serializer = SubmissionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 
 
 
-# codeblock_submission data
-@swagger_auto_schema(methods=['get', 'put', 'delete'], request_body=SubmissionSerializer)
 @api_view(['GET', 'PUT', 'DELETE'])
-def codeblock_submission_detail(request,code_block_id):
-
-    # check if code block exist
+def codeblock_submission_detail(request, code_block_id):
+    user_id = request.GET.get('user_id')
     codeblock = get_object_or_404(CodeBlock, id=code_block_id)
 
-
     if request.method == "GET":
-        user_id =  request.data.get('user_id')
-        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id)
-
-        #check if there is already submission exist
-        if submission.exists():
-            serializer = SubmissionSerializer(submission, many=True)
-            submission_logger("submission exist")
+        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
+        if submission:
+            serializer = SubmissionSerializer(submission)
+            submission_logger.debug("submission exists")
             return Response(serializer.data, status=200)
-
         else:
-            return Response({'error': 'No submission found'}, status=400)
+            new_submission, errors = create_new_submission(code_block_id, user_id)
+            if new_submission:
+                serializer = SubmissionSerializer(new_submission)
+                return Response(serializer.data, status=201)
+            return Response(errors, status=400)
 
-    # saving the new submission
     elif request.method == "PUT":
-        user_id =  request.data.get('user_id')
-        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id)
-        if submission.exists():
-            serializer = SubmissionSerializer(submission, data=request.data)
+        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
+        if submission:
+            data = request.data.copy()
+            data['code_block_id'] = code_block_id  # Add code_block_id to the data
+            data['user_id'] = user_id  # Add user_id to the data
+            serializer = SubmissionSerializer(submission, data=data)
             if serializer.is_valid():
                 new_sub = serializer.save()
-                submission_logger("submission saved")
-                send_codeblock_update(code_block_id,new_sub.user_code)
+                submission_logger.debug("submission saved")
+                send_codeblock_update(code_block_id, new_sub.user_code)
                 return Response(serializer.data, status=200)
             return Response(serializer.errors, status=400)
         else:
-            codeblock_submission(request, user_id)
+            new_submission, errors = create_new_submission(code_block_id, user_id)
+            if new_submission:
+                serializer = SubmissionSerializer(new_submission)
+                return Response(serializer.data, status=201)
+            return Response(errors, status=400)
+
+    elif request.method == "DELETE":
+        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
+        if submission:
+            submission.delete()
+            return Response(status=204)
+        else:
+            new_submission, errors = create_new_submission(code_block_id, user_id)
+            if new_submission:
+                serializer = SubmissionSerializer(new_submission)
+                return Response(serializer.data, status=201)
+            return Response(errors, status=400)
+
+
+
+
+
+      
+
+
+
+
+
+
+@api_view(['POST'])
+def log_visitor(request):
+    data = request.data
+    client_uuid = data.get('clientUUID')
+    url = data.get('url')
+
+    if not client_uuid:
+        return Response({'error': 'ClientUUID is missing'}, status=400)
+    
+    if not url:
+        return Response({'error': 'URL is missing'}, status=400)
+
+    # Log the visitor
+    visitor = Visitor.objects.create(client_uuid=client_uuid, url=url,role='unknown')
+    visitor.save()
+
+    # Count the number of visitors to the same URL
+    visitor_count = Visitor.objects.filter(url=url).count()
+
+    # Determine role
+    if visitor_count > 1:
+        role = 'student'
+        visitor.role = 'student'
+        visitor.save()
+
+    else:
+        role = 'teacher'
+        visitor.role = 'teacher'
+        visitor.save()
+
+
+    return Response({'clientUUID': client_uuid, 'url': url, 'role': role}, status=200)
