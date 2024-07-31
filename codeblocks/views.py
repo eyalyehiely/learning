@@ -109,12 +109,6 @@ def codeblock_submission(request, user_id):
             return Response(serializer.errors, status=400)
 
 
-# def create_new_submission(data):
-#    # Create a new submission
-#     pass
-
-
-
 
 
 
