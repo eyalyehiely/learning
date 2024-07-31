@@ -6,7 +6,47 @@ from .utils import send_codeblock_update
 from drf_yasg.utils import swagger_auto_schema
 from .models import *
 from .serializers import *
-from backend.swagger import code_param,check_user_code_responses,codeblock_submission_responses,codeblock_submission_detail_responses
+from drf_yasg import openapi
+from codeblocks.serializers import *
+
+
+
+
+code_param = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'code': openapi.Schema(type=openapi.TYPE_STRING, description='Code to update the code block with')
+    }
+)
+
+# Define possible responses for check_user_code
+check_user_code_responses = {
+    200: openapi.Response(description="User code checked", examples={
+        'application/json': {"success": "match"},
+        'application/json': {"fail": "not match"}
+    }),
+    404: openapi.Response(description="No CodeBlock found with the given ID", examples={
+        'application/json': {"error": "No CodeBlock found with ID {code_block_id}."}
+    }),
+    500: openapi.Response(description="An error occurred", examples={
+        'application/json': {"error": "An error occurred: {error_message}"}
+    }),
+}
+
+# Define possible responses for codeblock_submission
+codeblock_submission_responses = {
+    201: SubmissionSerializer,
+    400: openapi.Response(description="Bad Request")
+}
+
+# Define possible responses for codeblock_submission_detail
+codeblock_submission_detail_responses = {
+    200: SubmissionSerializer(many=True),
+    400: openapi.Response(description="Bad Request"),
+    404: openapi.Response(description="Not Found"),
+    204: openapi.Response(description="No Content")
+}
+
 
 # defined logger
 codeblock_logger = logging.getLogger('code_block')
