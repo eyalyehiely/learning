@@ -20,3 +20,16 @@ class Submission(models.Model):
 
     def __str__(self):
         return self.user
+
+
+
+
+
+class Visitor(models.Model):
+    client_uuid = models.CharField(max_length=100)
+    url = models.URLField()
+    visit_time = models.DateTimeField(auto_now_add=True)
+    role = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f'{self.client_uuid} - {self.url}'
