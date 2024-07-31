@@ -19,11 +19,10 @@ code_param = openapi.Schema(
     }
 )
 
-# Define possible responses for check_user_code
-check_user_code_responses = {
-    200: openapi.Response(description="User code checked", examples={
-        'application/json': {"success": "match"},
-        'application/json': {"fail": "not match"}
+# Define possible responses
+responses = {
+    200: openapi.Response(description="Code block updated", examples={
+        'application/json': {"success": "Code block updated"}
     }),
     404: openapi.Response(description="No CodeBlock found with the given ID", examples={
         'application/json': {"error": "No CodeBlock found with ID {code_block_id}."}
@@ -31,20 +30,6 @@ check_user_code_responses = {
     500: openapi.Response(description="An error occurred", examples={
         'application/json': {"error": "An error occurred: {error_message}"}
     }),
-}
-
-# Define possible responses for codeblock_submission
-codeblock_submission_responses = {
-    201: SubmissionSerializer,
-    400: openapi.Response(description="Bad Request")
-}
-
-# Define possible responses for codeblock_submission_detail
-codeblock_submission_detail_responses = {
-    200: SubmissionSerializer(many=True),
-    400: openapi.Response(description="Bad Request"),
-    404: openapi.Response(description="Not Found"),
-    204: openapi.Response(description="No Content")
 }
 
 
@@ -72,7 +57,7 @@ def get_code_blocks(request):
 
 
 #checking user code : bonus
-@swagger_auto_schema(method='post', request_body=code_param, responses=check_user_code_responses)
+@swagger_auto_schema(method='post', request_body=code_param, responses=responses)
 @api_view(['POST'])
 def check_user_code(request, code_block_id):
     try:
@@ -106,7 +91,7 @@ def check_user_code(request, code_block_id):
 
 
 # codeblock submission
-@swagger_auto_schema(method='post', request_body=SubmissionSerializer, responses=codeblock_submission_responses)
+@swagger_auto_schema(method='post', request_body=SubmissionSerializer)
 @api_view(['POST'])
 def codeblock_submission(request, user_id):
     if request.method == 'POST':
