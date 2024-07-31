@@ -1,5 +1,5 @@
-from django.urls import path, include
-from .views import *
+from django.urls import path
+from .views import get_code_blocks, check_user_code, codeblock_submission, codeblock_submission_detail
 
 urlpatterns = [
     path('codeblocks/', get_code_blocks, name="code_locks"),

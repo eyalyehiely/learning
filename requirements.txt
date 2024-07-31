@@ -7,7 +7,7 @@ bidict==0.23.1
 certifi==2024.7.4
 cffi==1.16.0
 channels==4.0.0
-channels-redis==4.0.0
+channels-redis==4.2.0
 charset-normalizer==3.3.2
 constantly==23.10.4
 coreapi==2.3.3
@@ -20,7 +20,7 @@ Django==4.2.7
 django-channels==0.7.0
 django-cors-headers==4.4.0
 django-redis==5.4.0
-djangorestframework==3.14.0
+djangorestframework==3.15.2
 drf-yasg==1.21.7
 gunicorn==22.0.0
 h11==0.14.0
@@ -48,7 +48,7 @@ python-engineio==4.9.1
 python-socketio==5.11.3
 pytz==2024.1
 PyYAML==6.0.1
-redis==4.3.3
+redis==5.0.8
 requests==2.32.3
 requests-oauthlib==2.0.0
 ruamel.yaml==0.18.6
