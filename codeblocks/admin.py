@@ -2,7 +2,7 @@ from django.contrib import admin
 from.models import *
 
 class CodeBlockAdmin(admin.ModelAdmin):
-    list_display = ('id','title','code','solution')
+    list_display = ('id','title','instructions','code')
 admin.site.register(CodeBlock, CodeBlockAdmin)
 
 
