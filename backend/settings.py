@@ -120,7 +120,10 @@ DATABASES = {
 # }
 
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'https://learning-backend-dev.up.railway.app',
+]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
