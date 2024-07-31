@@ -28,8 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY','django-insecure-z)=%a%rstu2dl9^0y&8zlo@0f+s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'https://learning-backend-dev.up.railway.app,https://learning-frontend-dev.up.railway.app').split(',')
 # Application definition
 
 INSTALLED_APPS = [
@@ -99,7 +98,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -127,6 +125,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
