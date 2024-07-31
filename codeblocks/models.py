@@ -13,6 +13,8 @@ class CodeBlock(models.Model):
 
 class Submission(models.Model):
     code_block = models.ForeignKey(CodeBlock, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    instructions = models.TextField()
     user_code = models.TextField()
     user = models.CharField(max_length=100)
     passed = models.BooleanField(default=False)
