@@ -9,6 +9,7 @@ channels-redis==4.2.0
 constantly==23.10.4
 cryptography==43.0.0
 daphne==4.1.2
+dj-database-url==2.2.0
 Django==5.0.7
 django-cors-headers==4.4.0
 django-redis==5.4.0
@@ -20,13 +21,18 @@ hyperlink==21.0.0
 idna==3.7
 incremental==24.7.1
 inflection==0.5.1
+iniconfig==2.0.0
 msgpack==1.0.8
 packaging==24.1
+pluggy==1.5.0
 psycopg2-binary==2.9.9
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pycparser==2.22
 pyOpenSSL==24.2.1
+pytest==8.3.2
+pytest-django==4.8.0
+python-dotenv==1.0.1
 python-engineio==4.9.1
 python-socketio==5.11.3
 pytz==2024.1
