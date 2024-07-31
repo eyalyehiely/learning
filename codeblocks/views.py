@@ -53,47 +53,6 @@ def get_code_blocks(request):
         return Response({'Error': 'Page not found'}, status=404)
 
 
-@api_view(['GET'])
-def get_code_block(request, code_block_id):
-    try:
-        codeBlock = CodeBlock.objects.get(id=code_block_id)
-        codeblock_logger .debug(f"CodeBlock {codeBlock.title} provided to the client.")
-        serializer = CodeBlockSerializer(codeBlock)
-
-        return Response(serializer.data, status=200)
-
-    except ObjectDoesNotExist:
-        codeblock_logger .error(f"CodeBlock with id {code_block_id} not found.")
-        return Response({'Error': 'Code block not found'}, status=404)
-
-    except Exception as e:
-        codeblock_logger .error(f"Error retrieving code block: {e}")
-        return Response({'Error': 'An error occurred'}, status=500)
-
-
-# edit code
-@swagger_auto_schema(method='put', request_body=code_param, responses=responses)
-@api_view(['PUT'])
-def edit_code_block(request, code_block_id):
-    try:
-        codeBlock = CodeBlock.objects.get(id=code_block_id)
-        code = request.data.get('code')
-        codeBlock.code = code
-        codeBlock.save()
-
-        send_codeblock_update(code_block_id, code)
-
-        codeblock_logger .info(f"CodeBlock {codeBlock.title} updated.")
-        return Response({"success": "Code block updated"}, status=200)
-
-    except CodeBlock.DoesNotExist:
-        codeblock_logger .error(f"No CodeBlock found with ID {code_block_id}.")
-        return Response({"error": f"No CodeBlock found with ID {code_block_id}."}, status=404)
-
-    except Exception as e:
-        codeblock_logger .error(f"An error occurred: {e}")
-        return Response({"error": f"An error occurred: {e}"}, status=500)
-
 
 @api_view(['POST'])
 def check_user_code(request, code_block_id):

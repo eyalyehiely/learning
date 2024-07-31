@@ -22,20 +22,6 @@ def test_get_code_blocks(api_client, codeblock):
     assert len(response.data['codeBlocks']) == 1
     assert response.data['codeBlocks'][0]['title'] == "Test Code Block"
 
-@pytest.mark.django_db
-def test_get_code_block(api_client, codeblock):
-    url = reverse('get_code_block', args=[codeblock.id])
-    response = api_client.get(url)
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data['title'] == "Test Code Block"
-
-@pytest.mark.django_db
-def test_edit_code_block(api_client, codeblock):
-    url = reverse('edit_code_block', args=[codeblock.id])
-    data = {'code': "print('Hello World!')"}
-    response = api_client.put(url, data, format='json')
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data['success'] == "Code block updated"
 
 @pytest.mark.django_db
 def test_check_user_code(api_client, codeblock):
