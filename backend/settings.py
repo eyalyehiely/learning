@@ -52,8 +52,11 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')],
-        },
+            'USER': os.getenv('REDISUSER', 'default'),
+            'PASSWORD': os.getenv('REDISPASSWORD', 'IXCXGoGLbTrLUTomuoNKotwlSdYGSMgl'),
+            'HOST': os.getenv('REDISHOST', 'monorail.proxy.rlwy.net'),
+            'PORT': os.getenv('REDISPORT', '6379'),
+    }
     },
 }
 
