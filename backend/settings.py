@@ -171,7 +171,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'https://learning-frontend-dev.up.railway.app',
+]
 
 LOGGING = {
     'version': 1,
@@ -186,7 +189,7 @@ LOGGING = {
         'code_block_file': {
             'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/code_block.log'),
+            'filename': 'logs/code_block.log',
             'formatter': 'simpleRe',
             'when': 'midnight',
             'backupCount': 7,
@@ -194,7 +197,7 @@ LOGGING = {
         'submission_file': {
             'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/submission.log'),
+            'filename': 'logs/submission.log',
             'formatter': 'simpleRe',
             'when': 'midnight',
             'backupCount': 7,
