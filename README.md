@@ -3,7 +3,10 @@
 ## Introduction
 
 This project is designed to help students and mentors conduct remote coding sessions. 
-by writing and changing the code in real-time. The application consists of two main pages: the Lobby page and the Code Block page.
+by writing and changing the code in real-time. 
+The application consists of two main pages:
+- The Lobby page.
+- The Code Block page.
 
 ## Features
 
@@ -14,22 +17,20 @@ by writing and changing the code in real-time. The application consists of two m
 
 ### Code Block Page
 
-- The first user to open the Code Block page is considered the mentor, and subsequent users are students.
+- The first user to open the Code Block page is considered the mentor, other subsequent users are students.
 - The mentor sees the code block in read-only mode.
-- Students can edit the code block, and changes are displayed in real-time using WebSockets.
-- Supports JavaScript code only.
+- Students can edit the code block, changes are displayed in real-time using WebSockets.
 
-### Bonus Feature
+
+### Check Code - Bonus Feature
 
 - Each code block can have a “solution” field. If the student's code matches the solution, a big smiley face is displayed on the screen.
 
-## General Guidelines
 
-- Code blocks are created manually, with fields `title` and `code` (a string representing JS code).
-- Clear comments are added to the code where needed.
-- The project involves client, server, and database components and can be implemented using any framework/language.
+### Architecture Overview and Tech Stack
+https://drive.google.com/file/d/11PUG5nbp-kBrYvv6zQMQ_D0fP5pAH9bx/view?usp=sharing
 
-## Tech Stack
+## Tech 
 
 ### Frontend
 
@@ -59,10 +60,28 @@ by writing and changing the code in real-time. The application consists of two m
 - **Railway**:
 
 ## Quick Start
+Follow these steps to set up and run the application using Docker:
 
-### Backend
+## Configure Environment Variables
+1.Inspect the settings.py file in each service to identify required environment variables.
 
-1. Clone the repository:
+2.Create a .env file for each service, supplying the necessary variables. It's crucial to ensure that these variables are correctly set before proceeding.
+
+```
+docker build -t service-name 
+```
+
+## Run Containers
+Start each service with the following command:
+
+```
+docker run --env-file .env -p port:port service-name
+```
+
+
+## Local Development without Docker
+---
+1. Clone the backend repository:
     ```bash
     https://github.com/eyalyehiely/learning-backend/
     cd learning/backend
@@ -71,11 +90,11 @@ by writing and changing the code in real-time. The application consists of two m
 2. Create a virtual environment and activate it:
     ```bash
     on macOS:
-    python3 -m venv venv
-    source venv/bin/activate
+    python3 -m venv venv && source venv/bin/activate
 
     on Windows:
-
+    python -m venv venv
+    venv\Scripts\activate
     ```
 
 3. Install the dependencies:
@@ -85,18 +104,59 @@ by writing and changing the code in real-time. The application consists of two m
 
 4. Set up the database (make sure PostgreSQL is installed and running):
     ```bash
+    on macOS:
+    python3 manage.py makemigrations
+    python3 manage.py migrate
+    on Windows:
     python manage.py makemigrations
     python manage.py migrate
     ```
 
 5. Run the development server:
     ```bash
-    on macOS:
-    python3 manage.py runserver
+    daphne -p 8000 backend.asgi:application
 
-   on Windows:
-    python3 manage.py runserver
+6. Run the redis server:
     ```
+    redis-server
+    ```
+    
+
+
+### Frontend
+
+1. Clone the repository:
+    ```bash
+    https://github.com/eyalyehiely/learning-frontend/
+    cd learning/backend
+    ```
+
+2. Install the dependencies:
+    ```bash
+    npm install
+    ```
+
+3. Start the development server:
+    ```bash
+    npm start
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### API Documentation
 ---
@@ -242,29 +302,6 @@ Saving the new role & send data:
 - ```user_id```: The user unique id.
 - ```url```: The submission url.
 - ```role```: The current role.
-
-
-
-
-### Frontend
-
-1. Clone the repository:
-    ```bash
-    https://github.com/eyalyehiely/learning-frontend/
-    cd learning/backend
-    ```
-
-2. Install the dependencies:
-    ```bash
-    npm install
-    ```
-
-3. Start the development server:
-    ```bash
-    npm start
-    ```
-
-
 
 ---
 Good luck!
