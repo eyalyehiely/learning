@@ -35,7 +35,13 @@ by writing and changing the code in real-time. The application consists of two m
 ### Frontend
 
 - **React**: For building the user interface.
-- **Bootstrap**: 
+- **react-bootstrap**: 
+- **@monaco-editor/react**: 
+- **@mui/material**: 
+
+
+
+
 - **Socket.IO**: For real-time communication between the mentor and student.
 
 ### Backend
@@ -47,6 +53,7 @@ by writing and changing the code in real-time. The application consists of two m
 ### Database
 
 - **PostgreSQL**: For storing code blocks and user data.
+- **PostgreSQL**:
 
 ### Deployment
 
