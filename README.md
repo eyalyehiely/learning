@@ -1,4 +1,4 @@
-# Online Coding Web Application
+# Online Coding Web Application - Moveo Task
 
 ## Introduction
 
@@ -9,7 +9,7 @@ by writing and changing the code in real-time. The application consists of two m
 
 ### Lobby Page
 
-- The Lobby page displays a list of code blocks, each represented by a name (e.g., “Async case”).
+- The Lobby page displays a list of code blocks.
 - Users can choose a code block, which will navigate them to the Code Block page.
 
 ### Code Block Page
@@ -17,7 +17,6 @@ by writing and changing the code in real-time. The application consists of two m
 - The first user to open the Code Block page is considered the mentor, and subsequent users are students.
 - The mentor sees the code block in read-only mode.
 - Students can edit the code block, and changes are displayed in real-time using WebSockets.
-- Syntax highlighting is provided using Highlight.js (or an equivalent library).
 - Supports JavaScript code only.
 
 ### Bonus Feature
@@ -267,17 +266,9 @@ Saving the new role & send data:
 
 
 
-## Submission
-
-1. Deploy the project and supply the URL for the app.
-2. Upload your code to GitHub and attach a link to your GitHub repository.
-
-## Contact
-
-If you have any questions regarding the assignment, do not hesitate to contact us over email or phone.
-
+---
 Good luck!
 
----
+
 
 
