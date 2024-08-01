@@ -221,18 +221,20 @@ def edit_submission(request, code_block_id):
         submission_logger.debug("submission not found")
         return Response({'error': 'Submission not found'}, status=404)
 
+
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
-type=openapi.TYPE_OBJECT,
-properties={
-'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID'),
-'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
-}
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID'),
+        'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
+    }
 ))
 @api_view(['POST'])
 def log_visitor(request):
     data = request.data
     client_uuid = data.get('clientUUID')
     url = data.get('url')
+    
     if not client_uuid:
         submission_logger.debug("ClientUUID is missing")
         return Response({'error': 'ClientUUID is missing'}, status=400)
@@ -241,26 +243,19 @@ def log_visitor(request):
         submission_logger.debug("URL is missing")
         return Response({'error': 'URL is missing'}, status=400)
 
-    visitor = Visitor.objects.create(client_uuid=client_uuid, url=url, role='unknown')
-    submission_logger.debug("visitor saved")
-    visitor.save()
-
-    visitor_count = Visitor.objects.filter(url=url).count()
-
-    if visitor_count > 1:
+    # Check if there is already a teacher for the given code block
+    teacher_exists = Visitor.objects.filter(url=url, role='teacher').exists()
+    
+    if teacher_exists:
         role = 'student'
-        visitor.role = 'student'
-        submission_logger.debug(f"visitor saved with role of {role}")
-        visitor.save()
     else:
         role = 'teacher'
-        visitor.role = 'teacher'
-        submission_logger.debug(f"visitor saved with role of {role}")
-        visitor.save()
+    
+    visitor = Visitor.objects.create(client_uuid=client_uuid, url=url, role=role)
+    submission_logger.debug(f"visitor saved with role of {role}")
+    visitor.save()
 
     return Response({'clientUUID': client_uuid, 'url': url, 'role': role}, status=200)
-
-
 
 
 @swagger_auto_schema(method='get', responses={200: CodeBlockSerializer()})
