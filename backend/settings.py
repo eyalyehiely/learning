@@ -28,9 +28,9 @@ SECRET_KEY = os.getenv('SECRET_KEY','django-insecure-z)=%a%rstu2dl9^0y&8zlo@0f+s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'https://learning-backend-dev.up.railway.app,https://learning-frontend-dev.up.railway.app').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'https://learning-backend-dev.up.railway.app,https://learning-frontend-dev.up.railway.app').split(',')
 # Application definition
-ALLOWED_HOSTS = ['localhost']
+# ALLOWED_HOSTS = ['localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -101,23 +101,23 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': os.getenv('DATABASE_NAME', 'railway'),
-#         'USER': os.getenv('DATABASE_USER', 'postgres'),
-#         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'OdZDXLDajXYeGQnuyPlZfXyKYHQQoZQG'),
-#         'HOST': os.getenv('DATABASE_HOST', 'viaduct.proxy.rlwy.net'),
-#         'PORT': os.getenv('DATABASE_PORT', '43908'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DATABASE_NAME', 'railway'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'OdZDXLDajXYeGQnuyPlZfXyKYHQQoZQG'),
+        'HOST': os.getenv('DATABASE_HOST', 'viaduct.proxy.rlwy.net'),
+        'PORT': os.getenv('DATABASE_PORT', '43908'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 SWAGGER_SETTINGS = {
