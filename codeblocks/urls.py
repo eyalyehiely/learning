@@ -9,5 +9,6 @@ urlpatterns = [
     path("fetchClientUuidtoServer/", fetch_client_uuid_to_server, name='fetch_client_uuid_to_server'),
     path("codeblock/submission/<int:code_block_id>/edit/", edit_submission, name="edit_submission"),
     path('log_visitor/', log_visitor, name='log_visitor'),
+    path('codeblock/',get_current_code_block,name='get_current_code_block')
 
 ]
