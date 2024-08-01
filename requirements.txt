@@ -7,7 +7,7 @@ Automat==22.10.0
 bidict==0.23.1
 certifi==2024.7.4
 cffi==1.16.0
-channels==3.0.4
+channels==3.0.5
 channels-redis==3.3.1
 charset-normalizer==3.3.2
 constantly==23.10.4
@@ -17,16 +17,12 @@ cryptography==43.0.0
 daphne==3.0.2
 Deprecated==1.2.14
 dj-database-url==2.2.0
-<<<<<<< HEAD
 Django==5.0.7
-=======
-Django==4.0.9
->>>>>>> 4d5474a (fix view)
 django-channels==0.7.0
 django-cors-headers==4.4.0
 django-redis==5.0.0
-djangorestframework==3.15.2
-drf-yasg==1.21.7
+djangorestframework==3.12.4
+drf-yasg==1.20.0
 gunicorn==22.0.0
 h11==0.14.0
 hiredis==3.0.0
