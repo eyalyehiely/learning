@@ -222,26 +222,13 @@ def edit_submission(request, code_block_id):
         return Response({'error': 'Submission not found'}, status=404)
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 4d5474a (fix view)
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
         'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID'),
         'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
     }
-<<<<<<< HEAD
-))
-@swagger_auto_schema(method='post', request_body=openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID'),
-        'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
-    }
-=======
->>>>>>> 4d5474a (fix view)
 ))
 @api_view(['POST'])
 def log_visitor(request):
@@ -275,11 +262,6 @@ def log_visitor(request):
     submission_logger.debug(f"visitor saved with role of {role}")
     return Response({'clientUUID': client_uuid, 'url': url, 'role': role}, status=200)
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 4d5474a (fix view)
 @swagger_auto_schema(method='get', responses={200: CodeBlockSerializer()})
 @api_view(['GET'])
 def get_current_code_block(request):
