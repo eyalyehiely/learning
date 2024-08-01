@@ -28,8 +28,7 @@ The application consists of two main pages:
 
 
 ### Architecture Overview and Tech Stack
-https://drive.google.com/file/d/11PUG5nbp-kBrYvv6zQMQ_D0fP5pAH9bx/view?usp=sharing
-
+https://drive.google.com/file/d/11PUG5nbp-kBrYvv6zQMQ_D0fP5pAH9bx/view?usp=drive_link
 ## Tech 
 
 ### Frontend
