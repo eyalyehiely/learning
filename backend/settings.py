@@ -160,8 +160,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
 
@@ -173,13 +171,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
 'https://learning-frontend-dev.up.railway.app',
-    # "http://localhost:5173",
+    "http://localhost:5173",
 ]
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
-    "OPTIONS",
-    "PATCH",
     "POST",
     "PUT",
 ]
