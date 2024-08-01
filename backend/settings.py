@@ -120,6 +120,15 @@ DATABASES = {
 # }
 
 
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
+        }
+    },
+}
+
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://learning-backend-dev.up.railway.app',
@@ -161,7 +170,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
