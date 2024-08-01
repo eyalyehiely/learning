@@ -53,11 +53,11 @@ by writing and changing the code in real-time. The application consists of two m
 ### Database
 
 - **PostgreSQL**: For storing code blocks and user data.
-- **PostgreSQL**:
+- **Redis**:
 
 ### Deployment
 
-- The project can be deployed using any hosting service such as Railway.app, Netlify, Vercel, etc.
+- **Railway**:
 
 ## Installation and Setup
 
@@ -65,14 +65,18 @@ by writing and changing the code in real-time. The application consists of two m
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/online-coding-webapp.git
-    cd online-coding-webapp/backend
+    https://github.com/eyalyehiely/learning-backend/
+    cd learning/backend
     ```
 
 2. Create a virtual environment and activate it:
     ```bash
-    python -m venv venv
+    on macOS:
+    python3 -m venv venv
     source venv/bin/activate
+
+    on Windows:
+
     ```
 
 3. Install the dependencies:
@@ -88,14 +92,167 @@ by writing and changing the code in real-time. The application consists of two m
 
 5. Run the development server:
     ```bash
-    python manage.py runserver
+    on macOS:
+    python3 manage.py runserver
+
+   on Windows:
+    python3 manage.py runserver
     ```
+
+### API Documentation
+---
+
+```
+ws/codeblock/${id}/
+```
+This WebSocket endpoint is used to establish a real-time connection between student to teacher.
+- **Path Parameters**:
+- ```id ```: The code block id.
+
+
+---
+```
+GET /codeblocks/
+```
+This endpoint fetch all code blocks to the Lobby page.
+- **Response**:
+
+- ```id ```: The code block id.
+- ```title```: The code block title.
+- ```instructions```: The code block instructions.
+- ```code```: The code block script.
+
+
+```
+POST /codeblock/${id}/check/
+```
+This endpoint checks if the user script is correct.
+
+**Request Body**:
+- ```code```: The user script.
+- ```user_id```: The user unique id.
+
+
+
+**Response**:
+
+- ```id ```: The code block id.
+- ```title```: The code block title.
+- ```instructions```: The code block instructions.
+- ```code```: The code block script.
+
+A message indicating if the script is correct.
+
+
+
+
+```
+POST /fetchClientUuidToServer/
+```
+This endpoint send to the server the user unique id.
+
+**Request Body**:
+- ```user_id```: The user unique id.
+
+
+
+**Response**:
+
+A message indicating if the user_id accepted.
+
+
+
+```
+POST /codeblock/submission/
+```
+This endpoint create a new submission if there isnt already one.
+
+**Request Body**:
+- ```user_id```: The user unique id.
+- ```code_block_id```: The original script id.
+
+
+
+
+
+**Response**:
+
+A message if submission exist or create a new one.
+
+
+```
+GET,DELETE /codeblock/submission/{id}/?user_id={clientUUID}
+```
+
+
+**GET:**
+
+**Response**:
+- Return the current submission or try to create one.
+
+
+**DELETE:**
+
+**Request**:
+- Return the current submission or try to create one. ??????
+
+
+**Response**:
+DELETE the current submission.
+
+
+
+
+
+```
+PUT /codeblock/submission/{id}/?user_id={clientUUID}
+```
+This endpoint edit the current submission.
+
+**Request Body**:
+- ```code```: The user script.
+- ```code_block_id```: The original script id.
+- ```user_id```: The user unique id.
+
+
+
+
+**Response**:
+
+Saving the new submission or send an error message.
+
+
+
+
+
+```
+POST /log_visitor/
+```
+This endpoint check how many users are in the same submission and determine a role.
+
+**Request Body**:
+- ```user_id```: The user unique id.
+- ```url```: The submission url.
+
+
+
+
+**Response**:
+
+Saving the new role & send data:
+- ```user_id```: The user unique id.
+- ```url```: The submission url.
+- ```role```: The current role.
+
+
+
 
 ### Frontend
 
-1. Navigate to the frontend directory:
+1. Clone the repository:
     ```bash
-    cd ../frontend
+    https://github.com/eyalyehiely/learning-frontend/
+    cd learning/backend
     ```
 
 2. Install the dependencies:
@@ -108,10 +265,7 @@ by writing and changing the code in real-time. The application consists of two m
     npm start
     ```
 
-## Deployment
 
-1. Choose a hosting service (e.g., Railway.app, Netlify, Vercel).
-2. Deploy the backend and frontend separately, ensuring that the frontend can communicate with the backend API.
 
 ## Submission
 
@@ -126,8 +280,4 @@ Good luck!
 
 ---
 
-Moveo's HR team
 
-Gilad Herman | VP HR
-Email | gilad@moveo.group
-Moveo.group
