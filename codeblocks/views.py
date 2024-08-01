@@ -152,7 +152,7 @@ def codeblock_submission(request):
     check_submission = Submission.objects.filter(code_block=codeblock, user_id=user_id)
     if check_submission.exists():
         submission_logger.debug("Error,Submission already exists")
-        return Response({'error': 'Submission already exists'}, status=400)
+        return Response({'error': 'Submission already exists'}, status=200)
     
     # Create the new Submission object directly
     submission = Submission.objects.create(
@@ -186,7 +186,7 @@ def codeblock_submission_detail(request, code_block_id):
     if not user_id:
         submission_logger.debug("Error,User ID is missing")
         return Response({'error': 'User ID is missing'}, status=400)
-        
+    
     codeblock = get_object_or_404(CodeBlock, id=code_block_id)
 
     if request.method == "GET":
@@ -199,7 +199,7 @@ def codeblock_submission_detail(request, code_block_id):
             new_submission, errors = create_new_submission(code_block_id, user_id)
             if new_submission:
                 serializer = SubmissionSerializer(new_submission)
-                submission_logger.debug(f"Error,Unable to create submission ,{errors}")
+                submission_logger.debug("New submission created")
                 return Response(serializer.data, status=201)
             return Response({'error': 'Unable to create submission', 'details': errors}, status=400)
 
@@ -241,12 +241,11 @@ def edit_submission(request, code_block_id):
             submission_logger.debug("submission saved")
             send_codeblock_update(codeblock.id, new_sub.user_code)
             return Response(serializer.data, status=200)
-        submission_logger.debug("Error,submission failed",serializer.errors)
+        submission_logger.debug("Error,submission failed", serializer.errors)
         return Response(serializer.errors, status=400)
     else:
         submission_logger.debug("submission not found")
         return Response({'error': 'Submission not found'}, status=404)
-
 
 
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
