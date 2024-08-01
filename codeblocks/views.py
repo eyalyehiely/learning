@@ -234,25 +234,25 @@ def log_visitor(request):
     data = request.data
     client_uuid = data.get('clientUUID')
     url = data.get('url')
-    
+
     if not client_uuid:
         submission_logger.debug("ClientUUID is missing")
         return Response({'error': 'ClientUUID is missing'}, status=400)
-
+    
     if not url:
         submission_logger.debug("URL is missing")
         return Response({'error': 'URL is missing'}, status=400)
 
-    # Check if there is already a teacher for the given code block
-    teacher_exists = Visitor.objects.filter(url=url, role='teacher').exists()
-    
-    if teacher_exists:
-        role = 'student'
-    else:
+    # Count the number of visitors to the same URL
+    visitor_count = Visitor.objects.filter(url=url).count()
+
+    if visitor_count == 0:
         role = 'teacher'
-    
+    else:
+        role = 'student'
+
     visitor = Visitor.objects.create(client_uuid=client_uuid, url=url, role=role)
-    submission_logger.debug(f"visitor saved with role of {role}")
+    submission_logger.debug("visitor saved")
     visitor.save()
 
     return Response({'clientUUID': client_uuid, 'url': url, 'role': role}, status=200)
