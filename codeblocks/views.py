@@ -89,6 +89,13 @@ def check_user_code(request, code_block_id):
         codeblock_logger.error(f"An error occurred: {e}")
         return Response({"error": f"An error occurred: {e}"}, status=500)
 
+
+@swagger_auto_schema(method='post', request_body=openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID')
+    }
+))
 @api_view(['POST'])
 def fetch_client_uuid_to_server(request):
     data = json.loads(request.body)
@@ -169,7 +176,9 @@ def codeblock_submission(request):
     return Response(response_data, status=201)
 
 
-
+@swagger_auto_schema(methods=['get', 'delete'], manual_parameters=[
+    openapi.Parameter('user_id', openapi.IN_QUERY, description="User ID", type=openapi.TYPE_STRING)
+])
 @api_view(['GET', 'DELETE'])
 def codeblock_submission_detail(request, code_block_id):
     user_id = request.GET.get('user_id')
@@ -206,6 +215,10 @@ def codeblock_submission_detail(request, code_block_id):
 
 
 
+@swagger_auto_schema(method='put', manual_parameters=[
+    openapi.Parameter('user_id', openapi.IN_QUERY, description="User ID", type=openapi.TYPE_STRING),
+    openapi.Parameter('code_block_id', openapi.IN_PATH, description="Code Block ID", type=openapi.TYPE_INTEGER)
+], request_body=SubmissionSerializer)
 @api_view(['PUT'])
 def edit_submission(request, code_block_id):
     user_id = request.GET.get('user_id')
@@ -236,7 +249,13 @@ def edit_submission(request, code_block_id):
 
 
 
-
+@swagger_auto_schema(method='post', request_body=openapi.Schema(
+type=openapi.TYPE_OBJECT,
+properties={
+'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID'),
+'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
+}
+))
 @api_view(['POST'])
 def log_visitor(request):
     data = request.data
