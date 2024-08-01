@@ -1,8 +1,6 @@
 from django.db import models
 
-
 class CodeBlock(models.Model):
-    id = models.AutoField(primary_key=True) 
     title = models.CharField(max_length=100)
     instructions = models.TextField()
     code = models.TextField()
@@ -10,7 +8,6 @@ class CodeBlock(models.Model):
 
     def __str__(self):
         return self.title
-
 
 class Submission(models.Model):
     code_block = models.ForeignKey(CodeBlock, on_delete=models.CASCADE)
@@ -21,10 +18,6 @@ class Submission(models.Model):
 
     def __str__(self):
         return self.user
-
-
-
-
 
 class Visitor(models.Model):
     client_uuid = models.CharField(max_length=100)
