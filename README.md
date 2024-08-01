@@ -1,7 +1,11 @@
 # Online Coding Web Application - Moveo Task
 
 ```
+<<<<<<< HEAD
 learning-frontend-dev.up.railway.app
+=======
+https://learning-frontend-dev.up.railway.app
+>>>>>>> 4d5474a (fix view)
 ```
 ## Introduction
 

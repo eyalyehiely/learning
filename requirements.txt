@@ -17,7 +17,11 @@ cryptography==43.0.0
 daphne==3.0.2
 Deprecated==1.2.14
 dj-database-url==2.2.0
+<<<<<<< HEAD
 Django==5.0.7
+=======
+Django==4.0.9
+>>>>>>> 4d5474a (fix view)
 django-channels==0.7.0
 django-cors-headers==4.4.0
 django-redis==5.0.0
