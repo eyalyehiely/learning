@@ -13,7 +13,6 @@ class CodeBlockConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.room_group_name,
@@ -22,15 +21,20 @@ class CodeBlockConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        code = data['code']
+        code = data.get('code', None)
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'code_update',
-                'code': code,
-            }
-        )
+        if code is not None:
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'code_update',
+                    'code': code,
+                }
+            )
+        else:
+            await self.send(text_data=json.dumps({
+                'error': 'Code field is missing',
+            }))
 
     async def code_update(self, event):
         code = event['code']
