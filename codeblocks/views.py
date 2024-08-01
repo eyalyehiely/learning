@@ -229,6 +229,13 @@ def edit_submission(request, code_block_id):
         'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
     }
 ))
+@swagger_auto_schema(method='post', request_body=openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'clientUUID': openapi.Schema(type=openapi.TYPE_STRING, description='Client UUID'),
+        'url': openapi.Schema(type=openapi.TYPE_STRING, description='URL visited')
+    }
+))
 @api_view(['POST'])
 def log_visitor(request):
     data = request.data
@@ -238,25 +245,28 @@ def log_visitor(request):
     if not client_uuid:
         submission_logger.debug("ClientUUID is missing")
         return Response({'error': 'ClientUUID is missing'}, status=400)
-    
+
     if not url:
         submission_logger.debug("URL is missing")
         return Response({'error': 'URL is missing'}, status=400)
 
-    # Count the number of visitors to the same URL
-    visitor_count = Visitor.objects.filter(url=url).count()
-
-    if visitor_count == 0:
-        role = 'teacher'
-    else:
-        role = 'student'
-
-    visitor = Visitor.objects.create(client_uuid=client_uuid, url=url, role=role)
+    visitor = Visitor.objects.create(client_uuid=client_uuid, url=url, role='unknown')
     submission_logger.debug("visitor saved")
     visitor.save()
 
-    return Response({'clientUUID': client_uuid, 'url': url, 'role': role}, status=200)
+    # Count the number of visitors to the same URL
+    visitor_count = Visitor.objects.filter(url=url).count()
 
+    if visitor_count > 1:
+        role = 'student'
+    else:
+        role = 'teacher'
+    
+    visitor.role = role
+    visitor.save()
+
+    submission_logger.debug(f"visitor saved with role of {role}")
+    return Response({'clientUUID': client_uuid, 'url': url, 'role': role}, status=200)
 
 @swagger_auto_schema(method='get', responses={200: CodeBlockSerializer()})
 @api_view(['GET'])
