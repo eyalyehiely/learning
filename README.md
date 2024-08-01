@@ -58,7 +58,7 @@ by writing and changing the code in real-time. The application consists of two m
 
 - **Railway**:
 
-## Installation and Setup
+## Quick Start
 
 ### Backend
 
