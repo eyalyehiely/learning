@@ -9,10 +9,12 @@ class CodeBlockSerializer(serializers.ModelSerializer):
 
 class SubmissionSerializer(serializers.ModelSerializer):
     code_block_id = serializers.IntegerField(write_only=True)
+    code_block = serializers.PrimaryKeyRelatedField(queryset=CodeBlock.objects.all(), write_only=True)
+    user_code = serializers.CharField()
 
     class Meta:
         model = Submission
-        fields = ['code_block_id', 'user_id', 'user_code', 'passed', 'created_at']
+        fields = ['code_block_id', 'user_id', 'user_code', 'passed', 'created_at', 'code_block']
 
     def create(self, validated_data):
         code_block_id = validated_data.pop('code_block_id')
