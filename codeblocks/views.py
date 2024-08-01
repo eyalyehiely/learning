@@ -187,15 +187,6 @@ def codeblock_submission_detail(request, code_block_id):
                 return Response(serializer.data, status=201)
             return Response({'error': 'Unable to create submission', 'details': errors}, status=400)
 
-
-    elif request.method == "DELETE":
-        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
-        if submission:
-            submission.delete()
-            return Response(status=204)
-        else:
-            return Response({'error': 'No submission found to delete'}, status=400)
-
     elif request.method == "DELETE":
         submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
         if submission:
