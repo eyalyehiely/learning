@@ -22,7 +22,7 @@ django-channels==0.7.0
 django-cors-headers==4.4.0
 django-redis==5.0.0
 djangorestframework==3.12.4
-drf-yasg==1.21.7
+drf-yasg==1.20.0
 gunicorn==22.0.0
 h11==0.14.0
 hiredis==3.0.0
@@ -38,14 +38,14 @@ msgpack==1.0.8
 oauthlib==3.2.2
 packaging==24.1
 pluggy==1.5.0
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.3
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pycparser==2.22
 pyOpenSSL==24.2.1
 pytest==8.3.2
 pytest-django==4.8.0
-python-dotenv==1.0.1
+python-dotenv==0.19.2
 python-engineio==4.9.1
 python-socketio==5.11.3
 pytz==2024.1
