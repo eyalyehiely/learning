@@ -186,7 +186,7 @@ LOGGING = {
         'code_block_file': {
             'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, '/logs/code_block.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/code_block.log'),
             'formatter': 'simpleRe',
             'when': 'midnight',
             'backupCount': 7,
@@ -194,7 +194,7 @@ LOGGING = {
         'submission_file': {
             'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, '/logs/submission.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/submission.log'),
             'formatter': 'simpleRe',
             'when': 'midnight',
             'backupCount': 7,
