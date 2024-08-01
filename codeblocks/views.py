@@ -134,14 +134,17 @@ def codeblock_submission(request):
     code_block_id = data.get('code_block_id')
     
     if not code_block_id:
+        submission_logger.debug("Error, CodeBlock ID is missing")
         return Response({'error': 'CodeBlock ID is missing'}, status=400)
     
     if not user_id:
+        submission_logger.debug("Error,User ID is missing")
         return Response({'error': 'User ID is missing'}, status=400)
 
     codeblock = get_object_or_404(CodeBlock, id=code_block_id)
     check_submission = Submission.objects.filter(code_block=codeblock, user_id=user_id)
     if check_submission.exists():
+        submission_logger.debug("Error,Submission already exists")
         return Response({'error': 'Submission already exists'}, status=400)
     
     # Create the new Submission object directly
@@ -150,6 +153,8 @@ def codeblock_submission(request):
         user_id=user_id,
         user_code=codeblock.code  # Initialize with the default value from CodeBlock
     )
+    submission_logger.debug("submission saved")
+    submission.save()
 
     # Prepare the response data
     response_data = {
@@ -160,7 +165,7 @@ def codeblock_submission(request):
         'passed': submission.passed,
         'created_at': submission.created_at
     }
-
+    submission_logger.debug("send submission to client")
     return Response(response_data, status=201)
 
 
@@ -170,6 +175,7 @@ def codeblock_submission_detail(request, code_block_id):
     user_id = request.GET.get('user_id')
     code_block_id = int(code_block_id)
     if not user_id:
+        submission_logger.debug("Error,User ID is missing")
         return Response({'error': 'User ID is missing'}, status=400)
         
     codeblock = get_object_or_404(CodeBlock, id=code_block_id)
@@ -184,6 +190,7 @@ def codeblock_submission_detail(request, code_block_id):
             new_submission, errors = create_new_submission(code_block_id, user_id)
             if new_submission:
                 serializer = SubmissionSerializer(new_submission)
+                submission_logger.debug(f"Error,Unable to create submission ,{errors}")
                 return Response(serializer.data, status=201)
             return Response({'error': 'Unable to create submission', 'details': errors}, status=400)
 
@@ -191,8 +198,10 @@ def codeblock_submission_detail(request, code_block_id):
         submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
         if submission:
             submission.delete()
+            submission_logger.debug("submission delete")
             return Response(status=204)
         else:
+            submission_logger.debug("no submission found")
             return Response({'error': 'No submission found to delete'}, status=400)
 
 
@@ -201,6 +210,7 @@ def codeblock_submission_detail(request, code_block_id):
 def edit_submission(request, code_block_id):
     user_id = request.GET.get('user_id')
     if not user_id:
+        submission_logger.debug("User ID is missing")
         return Response({'error': 'User ID is missing'}, status=400)
     
     codeblock = get_object_or_404(CodeBlock, id=code_block_id)
@@ -218,8 +228,10 @@ def edit_submission(request, code_block_id):
             submission_logger.debug("submission saved")
             send_codeblock_update(codeblock.id, new_sub.user_code)
             return Response(serializer.data, status=200)
+        submission_logger.debug("Error,submission failed",serializer.errors)
         return Response(serializer.errors, status=400)
     else:
+        submission_logger.debug("submission not found")
         return Response({'error': 'Submission not found'}, status=404)
 
 
@@ -232,13 +244,16 @@ def log_visitor(request):
     url = data.get('url')
 
     if not client_uuid:
+        submission_logger.debug("ClientUUID is missing")
         return Response({'error': 'ClientUUID is missing'}, status=400)
     
     if not url:
+        submission_logger.debug("URL is missing")
         return Response({'error': 'URL is missing'}, status=400)
 
     # Log the visitor
     visitor = Visitor.objects.create(client_uuid=client_uuid, url=url,role='unknown')
+    submission_logger.debug("visitor saved")
     visitor.save()
 
     # Count the number of visitors to the same URL
@@ -248,11 +263,13 @@ def log_visitor(request):
     if visitor_count > 1:
         role = 'student'
         visitor.role = 'student'
+        submission_logger.debug(f"visitor saved with role of {role}")
         visitor.save()
 
     else:
         role = 'teacher'
         visitor.role = 'teacher'
+        submission_logger.debug(f"visitor saved with role of {role}")
         visitor.save()
 
 
