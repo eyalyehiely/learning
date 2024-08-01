@@ -21,3 +21,9 @@ class SubmissionSerializer(serializers.ModelSerializer):
         code_block = get_object_or_404(CodeBlock, id=code_block_id)
         submission = Submission.objects.create(code_block=code_block, **validated_data)
         return submission
+
+    def update(self, instance, validated_data):
+        instance.user_code = validated_data.get('user_code', instance.user_code)
+        instance.passed = validated_data.get('passed', instance.passed)
+        instance.save()
+        return instance
