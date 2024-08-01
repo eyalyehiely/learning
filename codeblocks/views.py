@@ -61,30 +61,33 @@ def get_code_blocks(request):
 @api_view(['POST'])
 def check_user_code(request, code_block_id):
     try:
+        data = request.data
+        user_id = data.get('clientUUID')
         user_script = request.data.get('code')
-        script_solution = CodeBlock.objects.get(id=code_block_id).solution
+        codeblock = get_object_or_404(CodeBlock, id=code_block_id)
+        script_solution = codeblock.solution
+        
         if not script_solution:
-            codeblock_logger .error("No solution found for the given script ID.")
-            return Response({"error": "No solution found for the given script ID."}, status=404)
+            codeblock_logger.error("No solution found for the given code block ID.")
+            return Response({"error": "No solution found for the given code block ID."}, status=404)
 
         if user_script == script_solution:
-            codeblock_logger .info("User script matches the solution.")
+            codeblock_logger.info("User script matches the solution.")
             send_codeblock_update(code_block_id, user_script)
-            return Response({"success": "match"}, status=200)
 
+            return Response({"success": "match"}, status=200)
         else:
-            codeblock_logger .info("User script does not match the solution.")
+            codeblock_logger.info("User script does not match the solution.")
             send_codeblock_update(code_block_id, user_script)
             return Response({"fail": "not match"}, status=200)
 
     except CodeBlock.DoesNotExist:
-        codeblock_logger .error(f"No CodeBlock found with ID {code_block_id}.")
+        codeblock_logger.error(f"No CodeBlock found with ID {code_block_id}.")
         return Response({"error": f"No CodeBlock found with ID {code_block_id}."}, status=404)
 
     except Exception as e:
-        codeblock_logger .error(f"An error occurred: {e}")
+        codeblock_logger.error(f"An error occurred: {e}")
         return Response({"error": f"An error occurred: {e}"}, status=500)
-
 
 @api_view(['POST'])
 def fetch_client_uuid_to_server(request):
@@ -114,7 +117,7 @@ def create_new_submission(code_block_id, user_id):
     serializer = SubmissionSerializer(data=new_submission_data)
     if serializer.is_valid():
         new_submission = serializer.save()
-        submission_logger("submission created")
+        submission_logger.debug("submission created")
         return new_submission, None
     return None, serializer.errors
 
@@ -128,9 +131,8 @@ def create_new_submission(code_block_id, user_id):
 def codeblock_submission(request):
     data = request.data
     user_id = data.get('clientUUID')
-    code_block_id = int(data.get('code_block_id'))
+    code_block_id = data.get('code_block_id')
     
-
     if not code_block_id:
         return Response({'error': 'CodeBlock ID is missing'}, status=400)
     
@@ -141,24 +143,39 @@ def codeblock_submission(request):
     check_submission = Submission.objects.filter(code_block=codeblock, user_id=user_id)
     if check_submission.exists():
         return Response({'error': 'Submission already exists'}, status=400)
-    else:
-        data['user_id'] = user_id  # Ensure user_id is included in the data
-        serializer = SubmissionSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+    
+    # Create the new Submission object directly
+    submission = Submission.objects.create(
+        code_block=codeblock,
+        user_id=user_id,
+        user_code=codeblock.code  # Initialize with the default value from CodeBlock
+    )
+
+    # Prepare the response data
+    response_data = {
+        'id': submission.id,
+        'code_block_id': submission.code_block.id,
+        'user_id': submission.user_id,
+        'user_code': submission.user_code,
+        'passed': submission.passed,
+        'created_at': submission.created_at
+    }
+
+    return Response(response_data, status=201)
 
 
 
-
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'DELETE'])
 def codeblock_submission_detail(request, code_block_id):
     user_id = request.GET.get('user_id')
+    code_block_id = int(code_block_id)
+    if not user_id:
+        return Response({'error': 'User ID is missing'}, status=400)
+        
     codeblock = get_object_or_404(CodeBlock, id=code_block_id)
 
     if request.method == "GET":
-        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
+        submission = Submission.objects.filter(code_block_id=code_block_id, user_id=user_id).first()
         if submission:
             serializer = SubmissionSerializer(submission)
             submission_logger.debug("submission exists")
@@ -168,27 +185,8 @@ def codeblock_submission_detail(request, code_block_id):
             if new_submission:
                 serializer = SubmissionSerializer(new_submission)
                 return Response(serializer.data, status=201)
-            return Response(errors, status=400)
+            return Response({'error': 'Unable to create submission', 'details': errors}, status=400)
 
-    elif request.method == "PUT":
-        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
-        if submission:
-            data = request.data.copy()
-            data['code_block_id'] = code_block_id  # Add code_block_id to the data
-            data['user_id'] = user_id  # Add user_id to the data
-            serializer = SubmissionSerializer(submission, data=data)
-            if serializer.is_valid():
-                new_sub = serializer.save()
-                submission_logger.debug("submission saved")
-                send_codeblock_update(code_block_id, new_sub.user_code)
-                return Response(serializer.data, status=200)
-            return Response(serializer.errors, status=400)
-        else:
-            new_submission, errors = create_new_submission(code_block_id, user_id)
-            if new_submission:
-                serializer = SubmissionSerializer(new_submission)
-                return Response(serializer.data, status=201)
-            return Response(errors, status=400)
 
     elif request.method == "DELETE":
         submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
@@ -196,19 +194,42 @@ def codeblock_submission_detail(request, code_block_id):
             submission.delete()
             return Response(status=204)
         else:
-            new_submission, errors = create_new_submission(code_block_id, user_id)
-            if new_submission:
-                serializer = SubmissionSerializer(new_submission)
-                return Response(serializer.data, status=201)
-            return Response(errors, status=400)
+            return Response({'error': 'No submission found to delete'}, status=400)
+
+    elif request.method == "DELETE":
+        submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
+        if submission:
+            submission.delete()
+            return Response(status=204)
+        else:
+            return Response({'error': 'No submission found to delete'}, status=400)
 
 
 
+@api_view(['PUT'])
+def edit_submission(request, code_block_id):
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        return Response({'error': 'User ID is missing'}, status=400)
+    
+    codeblock = get_object_or_404(CodeBlock, id=code_block_id)
+    submission = Submission.objects.filter(code_block_id=codeblock.id, user_id=user_id).first()
 
-
-      
-
-
+    if submission:
+        data = request.data.copy()
+        data['code_block_id'] = code_block_id  # Ensure code_block_id is included
+        data['user_id'] = user_id  # Ensure user_id is included
+        if 'user_code' not in data:
+            data['user_code'] = submission.user_code  # Ensure user_code is included
+        serializer = SubmissionSerializer(submission, data=data)
+        if serializer.is_valid():
+            new_sub = serializer.save()
+            submission_logger.debug("submission saved")
+            send_codeblock_update(codeblock.id, new_sub.user_code)
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    else:
+        return Response({'error': 'Submission not found'}, status=404)
 
 
 
