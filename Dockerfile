@@ -16,8 +16,8 @@ RUN pip install -r requirements.txt
 COPY . /app/
 
 # Set environment variables for Django
-ENV DJANGO_SETTINGS_MODULE=myproject.settings
+ENV DJANGO_SETTINGS_MODULE=backend.settings
 ENV PYTHONPATH=/app
 
 # Command to run Gunicorn
-CMD ["gunicorn", "myproject.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000"]
