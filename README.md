@@ -1,11 +1,11 @@
 # Online Coding Web Application - Moveo Task
 
 ```
-<<<<<<< HEAD
+
 learning-frontend-dev.up.railway.app
 =======
 https://learning-frontend-dev.up.railway.app
->>>>>>> 4d5474a (fix view)
+
 ```
 ## Introduction
 
@@ -73,20 +73,23 @@ Follow these steps to set up and run the application using Docker:
 
 2.Create a .env file for each service, supplying the necessary variables. It's crucial to ensure that these variables are correctly set before proceeding.
 
-```
-docker build -t service-name 
-```
+
 
 ## Run Containers
 Start each service with the following command:
+```
+docker pull eyalyehiely/backend:latest
+(port8000)
+```
 
 ```
-docker run --env-file .env -p port:port service-name
+docker pull eyalyehiely/frontend:latest
+(port 3000)
 ```
 
 
 ## Local Development without Docker
----
+
 1. Clone the backend repository:
     ```bash
     https://github.com/eyalyehiely/learning-backend/
@@ -257,10 +260,6 @@ GET,DELETE /codeblock/submission/{id}/?user_id={clientUUID}
 
 
 **DELETE:**
-
-**Request**:
-- Return the current submission or try to create one. ??????
-
 
 **Response**:
 DELETE the current submission.
