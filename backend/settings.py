@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY','django-insecure-z)=%a%rstu2dl9^0y&8zlo@0f+s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'https://learning-backend-dev.up.railway.app,https://learning-frontend-dev.up.railway.app').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,https://learning-frontend-dev.up.railway.app').split(',')
 # Application definition
 # ALLOWED_HOSTS = ['localhost']
 
