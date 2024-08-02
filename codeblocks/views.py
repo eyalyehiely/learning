@@ -92,6 +92,8 @@ def check_user_code(request, code_block_id):
         codeblock_logger.error(f"An error occurred: {e}")
         return Response({"error": f"An error occurred: {e}"}, status=500)
 
+
+
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
