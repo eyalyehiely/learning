@@ -1,11 +1,7 @@
 # Online Coding Web Application - Moveo Task
 
 ```
-
-learning-frontend-dev.up.railway.app
-=======
 https://learning-frontend-dev.up.railway.app
-
 ```
 ## Introduction
 
